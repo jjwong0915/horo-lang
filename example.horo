@@ -1,0 +1,37 @@
+
+n = 0
+
+tree : graph
+	node : graph.node
+		weight = 1
+		visited = 0
+		awful = 0
+
+dfs = $ node
+	node.visited = true
+	for i in node.neighbor
+		if !i.visited
+			w = dfs i
+			if w > node.awful
+				node.awful = w
+			node.weight += w
+	node.awful = max node.awful n-node.weight
+	return node.weight
+
+main
+	t = 0
+	scan t
+	for i = 1 to t
+		scan n
+		for j = 1 to n-1
+			a = b = 0
+			scan a b
+			tree.nodes[a] -- tree.nodes[b]
+		dfs tree.root
+		ans = 999999
+		for node in tree
+			ans = min ans node.awful
+		print ans "\n"
+
+
+		

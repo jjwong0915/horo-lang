@@ -1,0 +1,50 @@
+
+// variable declaration
+
+variable_name = initial_value
+
+
+
+// funciton declaration
+
+def function_name arg1 arg2
+	// ...
+	return some_value
+
+
+
+// object constructor
+
+new_object : proto_object_1 proto_object_2
+	property_name_1 = initial_value_1
+	property_name_2 = initial_value_2
+	property_name_3
+		child_property_name = child_inital_value
+
+
+
+// build edge operator
+
+a -> b // unidirection
+a -- b // bidirection
+
+
+
+// quick callback
+
+calling_func param1 param2 ? quick_arg
+	// ...
+	return quick_value
+
+
+
+// quick function
+
+some_name = $ arg1 arg2
+	// ...
+	return some_value
+
+
+
+
+

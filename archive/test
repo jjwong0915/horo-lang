@@ -1,0 +1,48 @@
+edge_pro
+  direct = false
+  
+node_pro
+  weight = 0
+  visited = 0
+  awful = 0
+
+graph_pro
+  circle = false
+  root =NULL
+graph
+  nodeset
+  edgeset
+g = graph node_pro edge_pro graph_pro
+
+min_awful = 9999999
+
+def dfs_func node
+  
+  end = 1
+  
+  weights = node.neighbor.each i
+    if !i.visited
+      return dfs_func i
+      end = 0
+  
+  if end 
+    node.weight = 1
+  else 
+    node.weight = weights.sum
+    
+  node.awful = min weights n-weight
+  
+  return node.weight
+
+dfs_func g.root  
+  
+  
+    return;
+    
+def awful n
+  n.
+
+min g.nodes 
+
+g.min node
+  node.awful

@@ -1,0 +1,87 @@
+//horo compiler
+//data structure
+/*
+	每個結構中的成員分成abstract和concrete	
+	abstract:編譯時轉換
+	concrete:編譯後確實存在的data struct
+	structure_pro表式這structure是否有該成員 true 有 false 沒有
+*/
+graph//concrete
+  director = false//concrete
+  circle = false//concrete
+  nodeset//concrete
+  edgeset//concrete
+  nodenum = 0//concrete
+  edgenum = 0//concrete
+  root = NULL//concrete
+nodeset//concrete
+  vector|list <node>
+
+edgeset//concrete
+  vector|list <edge>
+
+node//concrete
+  weight = 0 //concrete
+  vector<pair|???> neighbor
+  
+edge//concrete
+  pair<> l  //預設l.first為start ,l.second為end //concrete
+  direct = 0//concrete
+  weight = 0 //concrete
+  
+edge_pro//abstract//adjust edge
+  l = true
+  weight = true
+  direct = false
+  
+node_pro//abstract//adjust node
+  weight = true
+  neighbor = true
+
+graph_pro//abstract//adjust graph
+  circle = false
+  root = false
+  nodeset = true
+  edgeset = true
+  nodenum = true
+  edgenum = true
+  root = false
+dfs_pro//abstract
+  visited = false
+  
+/*
+possible syntax
+?? represent some char
+*/
+//adjust edge property//abstract
+edge_pro
+  weight = false
+  director = true
+
+cause:
+
+edge
+  head = ?
+  tail = ?
+  direct = 0
+  //remove member-weight 
+//add new member|property to a structure
+??? member1 member2 ..... to structure//abstract
+ex:
+??? awful buttom_node_num to node
+
+cause:
+
+node_pro//abstract
+  weight = true
+  wful = ？//added
+  buttom_node_num // added by ??? syntax
+  
+cause:
+
+node
+  weight = 0
+  vector<pair|???> neighbor
+  awful = ？//added by node_pro
+  buttom_node_num = ？//added by node_pro
+//

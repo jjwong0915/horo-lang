@@ -1,0 +1,16 @@
+
+// `value` is from c++ native
+
+int = 0
+
+bool = false
+
+graph
+	direct = bool
+	circle = bool
+	node
+		neighbors = list<int>
+	root : node
+	nodes = vector<node>
+
+
