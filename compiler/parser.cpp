@@ -35,63 +35,60 @@ struct syntax : grammar<string::iterator, vector<string>()> {
 // ast structs
 struct syntax_tree;
 
-typedef variant<
-	recursive_wrapper<syntax_tree>,
-	string
-> syntax_tree_node;
-
 struct syntax_tree {
- 	string name;
- 	vector<syntax_tree_node> children;
+ 	int indent;
+ 	vector<string> content;
+ 	vector<syntax_tree> children;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(
-    syntax_tree,
-    (string, name)
-    (vector<syntax_tree_node>, children)
-);
 
 
 // debug
-struct syntax_tree_printer {
-	void operator() (syntax_tree t);
-};
-struct syntax_tree_node_printer : static_visitor<> {
-	void operator() (syntax_tree t) {
-		syntax_tree_printer printer;
-		printer(t);
+string tab(int n) {
+	string s;
+	for(int i=0;i<n;i++) {
+		s += " ";
 	}
-	void operator() (string s) {
-		cout << s << endl;
+	return s;
+}
+void print(syntax_tree t) {
+	cout << tab(t.indent);
+	for(string i : t.content) {
+		cout << i << " ";
 	}
-};
-void syntax_tree_printer::operator() (syntax_tree t) {
-	syntax_tree_node_printer printer;
-	cout << t.name << " {" << endl;
-	for(auto i : t.children) {
-		apply_visitor(printer, i);
+	cout << "{" << endl;
+	for(syntax_tree i : t.children) {
+		print(i);
 	}
-	cout << '}' << endl;
-};
+	cout << tab(t.indent) << "}" << endl;
+}
 
 
 // modify ast
-void modify(syntax_tree& now, int& step, vector<string> input) {
-	if(input[0].length() == step) {
-		if(input[1] == "def") {
-			syntax_tree t;
-			t.name = input[2];
-			now.children.push_back(t);
-			step = ~step;
-		} else {
-			cout << "\""+input[1]+"\" is undefined." << endl;
+void insert_node(vector<syntax_tree*>& now, vector<string> input) {
+	syntax_tree t;
+	t.indent = input[0].length();
+	t.content.insert(t.content.end(), ++input.begin(), input.end());
+	now.back()->children.push_back(t);
+	now.push_back(&(now.back()->children.back()));
+}
+void modify(vector<syntax_tree*>& now, vector<string> input) {
+	int input_indent = input[0].length();
+	int now_indent = now.back()->indent;
+
+	if(input_indent == now_indent) {
+		now.pop_back();
+		insert_node(now, input);
+	} else if(input_indent > now_indent) {
+		insert_node(now, input);
+	} else if(input_indent < now_indent) {
+		while(now.back()->indent > input_indent) {
+			now.pop_back();
 		}
-	} else {
-		if(step < 0 && input[0].length() > ~step) {
-			step = input[0].length();
-			modify(now, step, input);
+		if(now.back()->indent == input_indent) {
+			now.pop_back();
+			modify(now, input);
 		} else {
-			cout << "indent error" << endl;
+			cout << "[error] indent error" << endl;
 		}
 	}
 }
@@ -103,25 +100,26 @@ int main() {
 	string s;
 	syntax expr;
 	syntax_tree ast;
-	syntax_tree& now = ast;
-	syntax_tree_printer printer;
-	int step = 0;
+	vector<syntax_tree*> now;
 
-	now.name = "module";
+	ast.indent = -1;
+	ast.content.push_back("module");
+	now.push_back(&ast);
 
 	while(getline(cin, s)) {
 		string::iterator begin = s.begin();
 		vector<string> input;
 		bool ok = parse(begin, s.end(), expr, input);
 		if(ok && begin == s.end()) {
-			modify(now, step, input);
-			printer(now);
+			modify(now, input);
 		} else {
 			cout << "Failed" << endl;
 		}
 	}
 
-
+	for(syntax_tree i : ast.children) {
+		print(i);
+	}
 }
 
 
