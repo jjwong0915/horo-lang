@@ -1,5 +1,7 @@
+if f int x
+    int a = x
+    return a*2
 int main
-    int a
-        int b
-    void b
-        double c
+    int a = 5
+    int b = 10
+    f (b)
