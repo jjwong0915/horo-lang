@@ -1,11 +1,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <list>
 #include <boost/spirit/include/qi.hpp>
 
 using std::cin;
 using std::cout;
 using std::endl;
+using std::list;
 using std::getline;
 using std::vector;
 using std::string;
@@ -37,35 +39,35 @@ struct syntax : grammar<string::iterator, vector<string>()> {
 struct syntax_tree;
 
 struct syntax_tree {
- 	int indent;
- 	vector<string> tokens;
- 	vector<syntax_tree> children;
+ 	int indent = -2;
+ 	list<string> tokens;
+ 	list<syntax_tree> children;
 };
 
-typedef vector<syntax_tree>::iterator syntax_tree_iterator;
+typedef list<syntax_tree>::iterator syntax_tree_iterator;
 
 
 // process syntax
-bool for_syntax(vector<syntax_tree_iterator>& now) {
-	vector<string>& ts = now.back()->tokens;
-	syntax_tree_iterator parent = *(--now.end());
+bool if_syntax(list<syntax_tree_iterator>& now) {
+	list<string>& ts = now.back()->tokens;
+	syntax_tree_iterator parent = *(--(--now.end()));
 	if(ts.front() == "if") {
 		ts.insert(++ts.begin(), "(");
-		ts.insert(ts.end(), ") {");
+		ts.push_back(") {");
 		syntax_tree temp;
 		temp.indent = parent->indent;
 		temp.tokens.push_back("}");
-		parent->children.insert(++now.back(), temp);
+		parent->children.insert(++(now.back()), temp);
 		return true;
 	} else {
 		return false;
 	}
 }
 
-vector<bool (*)(vector<syntax_tree_iterator>&)> syntaxes = {for_syntax};
+list<bool (*)(list<syntax_tree_iterator>&)> syntaxes = {if_syntax};
 
-void process_syntax(vector<syntax_tree_iterator>& now) {
-	vector<syntax_tree>& chd = now.back()->children;
+void process_syntax(list<syntax_tree_iterator>& now) {
+	list<syntax_tree>& chd = now.back()->children;
 	for(auto i=chd.begin();i!=chd.end();i++) {
 		now.push_back(i);
 		process_syntax(now);
@@ -81,15 +83,15 @@ void process_syntax(vector<syntax_tree_iterator>& now) {
 
 
 // modify AST 
-void insert_node(vector<syntax_tree_iterator>& now, vector<string> data) {
+void insert_node(list<syntax_tree_iterator>& now, vector<string> data) {
 	syntax_tree t;
 	t.indent = data[0].length();
 	t.tokens.insert(t.tokens.end(), ++data.begin(), data.end());
 	now.back()->children.push_back(t);
-	now.push_back(--now.back()->children.end());
+	now.push_back(--(now.back()->children.end()));
 }
 
-int check_indent(vector<syntax_tree_iterator>& now, int input_indent) {
+int check_indent(list<syntax_tree_iterator>& now, int input_indent) {
 	int now_indent = now.back()->indent;
 	//cout << "now indent: " << now_indent << endl;
 	if(input_indent == now_indent) {
@@ -109,7 +111,7 @@ int check_indent(vector<syntax_tree_iterator>& now, int input_indent) {
 
 // output
 void print(syntax_tree t) {
-	if(t.indent >= 0) {
+	if(t.indent >= -1) {
 		for(int i=0;i<t.indent;i++) {
 			cout << " ";
 		}
@@ -125,9 +127,9 @@ void print(syntax_tree t) {
 
 
 //debug
-void print_now(vector<syntax_tree_iterator>& now) {
+void print_now(list<syntax_tree_iterator>& now) {
 	for(syntax_tree_iterator i : now) {
-		cout << i->tokens[0] << " ";
+		cout << i->tokens.front() << " ";
 	}
 	cout << endl;
 }
@@ -138,13 +140,13 @@ int main() {
 
 	string s;
 	syntax expr;
-	syntax_tree root, temp;
-	vector<syntax_tree_iterator> now;
+	syntax_tree root;
+	list<syntax_tree_iterator> now;
 
-	temp.indent = -1;
-	temp.tokens.push_back("module");
-	root.children.push_back(temp);
+	root.children.emplace_back();
 	now.push_back(--root.children.end());
+	now.back()->indent = -1;
+	now.back()->tokens.push_back("module");
 
 	while(getline(cin, s)) {
 		string::iterator begin = s.begin();
@@ -167,7 +169,9 @@ int main() {
 	}
 	process_syntax(now);
 
-	print(root.children.back());
+	for(syntax_tree i : root.children.back().children) {
+		print(i);
+	}
 
 	return 0;
 }
