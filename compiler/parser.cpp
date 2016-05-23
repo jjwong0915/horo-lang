@@ -3,6 +3,9 @@
 #include <vector>
 #include <boost/spirit/include/qi.hpp>
 
+#include "output.hpp"
+#include "ast_struct.hpp"
+#include "syntax_module.hpp"
 using std::cin;
 using std::cout;
 using std::endl;
@@ -23,7 +26,9 @@ using ascii::char_;
 using ascii::space;
 using ascii::space_type;
 
-
+using namespace output;
+using namespace ast_struct;
+using namespace	syntax_module;
 // grammer
 struct syntax : grammar<string::iterator, vector<string>()> {
 	syntax(): syntax::base_type(cmd) {
@@ -46,21 +51,7 @@ typedef vector<syntax_tree>::iterator syntax_tree_iterator;
 
 
 // process syntax
-bool for_syntax(vector<syntax_tree_iterator>& now) {
-	vector<string>& ts = now.back()->tokens;
-	syntax_tree_iterator parent = *(--now.end());
-	if(ts.front() == "if") {
-		ts.insert(++ts.begin(), "(");
-		ts.insert(ts.end(), ") {");
-		syntax_tree temp;
-		temp.indent = parent->indent;
-		temp.tokens.push_back("}");
-		parent->children.insert(++now.back(), temp);
-		return true;
-	} else {
-		return false;
-	}
-}
+
 
 vector<bool (*)(vector<syntax_tree_iterator>&)> syntaxes = {for_syntax};
 
@@ -107,30 +98,6 @@ int check_indent(vector<syntax_tree_iterator>& now, int input_indent) {
 }
 
 
-// output
-void print(syntax_tree t) {
-	if(t.indent >= 0) {
-		for(int i=0;i<t.indent;i++) {
-			cout << " ";
-		}
-		for(string s : t.tokens) {
-			cout << s << " ";
-		}
-		cout << endl;
-	}
-	for(syntax_tree i : t.children) {
-		print(i);
-	}
-}
-
-
-//debug
-void print_now(vector<syntax_tree_iterator>& now) {
-	for(syntax_tree_iterator i : now) {
-		cout << i->tokens[0] << " ";
-	}
-	cout << endl;
-}
 
 
 // parser
