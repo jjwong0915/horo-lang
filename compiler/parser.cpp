@@ -13,47 +13,16 @@ using std::getline;
 using std::vector;
 using std::string;
 
-using boost::variant;
-using boost::apply_visitor;
-using boost::static_visitor;
-using boost::recursive_wrapper;
-namespace qi = boost::spirit::qi;
-using qi::rule;
-using qi::grammar;
-using qi::parse;
-namespace ascii = boost::spirit::ascii;
-using ascii::char_;
-using ascii::space;
-using ascii::space_type;
-
 using namespace output;
 using namespace ast_struct;
 using namespace	syntax_module;
-// grammer
-struct syntax : grammar<string::iterator, vector<string>()> {
-	syntax(): syntax::base_type(cmd) {
-		cmd = *space >> +(char_ - space) % space;
-	}
-	rule<string::iterator, vector<string>()> cmd;
-};
 
-
-// AST structs
-struct syntax_tree;
-
-struct syntax_tree {
- 	int indent;
- 	vector<string> tokens;
- 	vector<syntax_tree> children;
-};
-
-typedef vector<syntax_tree>::iterator syntax_tree_iterator;
 
 
 // process syntax
 
 
-vector<bool (*)(vector<syntax_tree_iterator>&)> syntaxes = {for_syntax};
+vector<bool (*)(vector<syntax_tree_iterator>&)> syntaxes = {if_syntax};
 
 void process_syntax(vector<syntax_tree_iterator>& now) {
 	vector<syntax_tree>& chd = now.back()->children;

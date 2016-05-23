@@ -1,3 +1,7 @@
+#if !defined(OUTPUT)
+
+#define OUTPUT
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -33,3 +37,4 @@ namespace output{
 		cout << endl;
 	}	
 }
+#endif
