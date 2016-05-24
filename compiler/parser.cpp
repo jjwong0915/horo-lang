@@ -2,23 +2,40 @@
 #include <string>
 #include <vector>
 #include <list>
-#include <boost/spirit/include/qi.hpp>
-
+#include "boost/spirit/include/qi.hpp"
 #include "output.hpp"
 #include "ast_struct.hpp"
 #include "syntax_module.hpp"
-using std::cin;
+
 using std::cout;
+using std::cin;
 using std::endl;
-using std::list;
 using std::getline;
-using std::vector;
 using std::string;
+using std::vector;
+using std::list;
+namespace qi = boost::spirit::qi;
+using qi::rule;
+using qi::grammar;
+using qi::parse;
+namespace ascii = boost::spirit::ascii;
+using ascii::char_;
+using ascii::space;
+using ascii::space_type;
+using output::print;
+using ast_struct::syntax_tree;
+using ast_struct::syntax_tree_iterator;
+using syntax_module::if_syntax;
 
+list<bool (*)(list<syntax_tree_iterator>&)> syntaxes = {if_syntax};
 
-using namespace output;
-using namespace ast_struct;
-using namespace	syntax_module;
+// grammer
+struct tokenizer : grammar<string::iterator, vector<string>()> {
+	tokenizer(): tokenizer::base_type(cmd) {
+		cmd = *space >> +(char_ - space) % space;
+	}
+	rule<string::iterator, vector<string>()> cmd;
+};
 
 void process_syntax(list<syntax_tree_iterator>& now) {
 	list<syntax_tree>& chd = now.back()->children;
@@ -34,8 +51,6 @@ void process_syntax(list<syntax_tree_iterator>& now) {
 		}
 	}
 }
-
-
 // modify AST 
 void insert_node(list<syntax_tree_iterator>& now, vector<string> data) {
 	syntax_tree t;
@@ -58,25 +73,26 @@ int check_indent(list<syntax_tree_iterator>& now, int input_indent) {
 			cout << "[error] indent error" << endl;
 			return 1;
 		}
+		now.pop_back();
 	}
 	return 0;
 }
-
 // parser
-int main() {
+int main() {	
 
-	string s;
-	syntax expr;
 	syntax_tree root;
-	list<syntax_tree_iterator> now;
-
+	root.indent = -2;
 	root.children.emplace_back();
+
+	list<syntax_tree_iterator> now;
 	now.push_back(--root.children.end());
 	now.back()->indent = -1;
 	now.back()->tokens.push_back("module");
 
+	string s;
 	while(getline(cin, s)) {
 		string::iterator begin = s.begin();
+		tokenizer expr;
 		vector<string> data;
 		bool ok = parse(begin, s.end(), expr, data);
 		if(ok && begin == s.end()) {
@@ -101,6 +117,7 @@ int main() {
 	}
 
 	return 0;
+
 }
 
 

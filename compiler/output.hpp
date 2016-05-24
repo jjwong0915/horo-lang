@@ -1,41 +1,19 @@
-#if !defined(OUTPUT)
-
+#ifndef OUTPUT
 #define OUTPUT
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <boost/spirit/include/qi.hpp>
-
+#include <list>
 #include "ast_struct.hpp"
 
-using namespace std;
-using namespace ast_struct;
-// output
+using std::list;
+using ast_struct::syntax_tree;
+using ast_struct::syntax_tree_iterator;
+
 namespace output{
 	// output
-	void print(syntax_tree t) {
-		if(t.indent >= -1) {
-			for(int i=0;i<t.indent;i++) {
-				cout << " ";
-			}
-			for(string s : t.tokens) {
-				cout << s << " ";
-			}
-			cout << endl;
-		}
-		for(syntax_tree i : t.children) {
-			print(i);
-		}
-	}
-
-
+	void print(syntax_tree t);
 	//debug
-	void print_now(list<syntax_tree_iterator>& now) {
-		for(syntax_tree_iterator i : now) {
-			cout << i->tokens.front() << " ";
-		}
-		cout << endl;
-	}
+	void print_now(list<syntax_tree_iterator>& now);
+
 }
+
 #endif

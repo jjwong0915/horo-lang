@@ -1,25 +1,24 @@
-
-#if !defined(AST_STRUCT)
-
+#ifndef AST_STRUCT
 #define AST_STRUCT
 
-#include <iostream>
+#include <list>
 #include <string>
-#include <vector>
 
-using namespace std;
+using std::list;
+using std::string;
 
-namespace ast_struct{
+namespace ast_struct {
 	// AST structs
 	struct syntax_tree;
 
 	struct syntax_tree {
-	 	int indent = -2;
+	 	int indent;
 	 	list<string> tokens;
 	 	list<syntax_tree> children;
 	};
 
 	typedef list<syntax_tree>::iterator syntax_tree_iterator;
+
 }
 
 #endif
