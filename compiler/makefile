@@ -1,4 +1,4 @@
-.PHONY : clean
+.PHONY : clean install unistall
 CXXFLAGS = -std=c++11 -O3
 OBJ = compiler.o parser.o output.o syntax_module.o commandline.o
 
@@ -20,5 +20,10 @@ commandline.cpp :commandline.hpp
 clean:
 	rm *.o
 
+install:
+	cp compiler /usr/local/bin/horo
+
+uninstall:
+	rm /usr/local/bin/horo
 
 

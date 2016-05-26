@@ -40,7 +40,6 @@ namespace syntax_module {
 			temp.tokens.push_back("}");
 			(*prev(now.end(), 2))->children.insert(next(now.back()), temp);
 
-			//cout << "end with if while" << endl;
 			return 1;
 		} else {
 			return 0;
@@ -49,10 +48,17 @@ namespace syntax_module {
 	// ";" (must be last)
 	int semicolon_syntax(list<syntax_tree_iterator>& now) {
 		list<string>& ts = now.back()->tokens;
-		string tsb = ts.back();
-		if(ts.front().front()!='#' && tsb!="{" && tsb!="}" && tsb!=";" && tsb!=":") {
+		auto valid = [](string s) {
+			string notlast[] = {"{","}",";",":"," "};
+			for(auto i : notlast) {
+				if(s == i) {
+					return false;
+				}
+			}
+			return true;
+		};
+		if(ts.front().front()!='#' && valid(ts.back())) {
 			ts.push_back(";");
-			//cout << "end with ;" << endl;
 			return 1;
 		}
 		return 0;
@@ -64,19 +70,17 @@ namespace syntax_module {
 			ts.insert(next(ts.begin(), 2), "(");
 			ts.push_back(")");
 			ts.push_back("{");
-			//cout << "left side ok";
 			syntax_tree temp;
 			temp.indent = now.back()->indent;
 			temp.tokens.push_back("}");
 			(*prev(now.end(), 2))->children.insert(next(now.back()), temp);
 
-			//cout << "end with func" << endl;
 			return 1;
 		} else {
 			return 0;
 		}
 	}
-
+	// "} else {}" | "} else if() {}"
 	int else_syntax(list<syntax_tree_iterator>& now) {
 		list<string>& ts = now.back()->tokens;
 		if(ts.front() == "else") {
@@ -103,14 +107,13 @@ namespace syntax_module {
 				temp.tokens.push_back("}");
 				parent->children.insert(next(now.back()), temp);
 
-				//cout << "end with else" << endl;
 				return 1;
 			}
 		} else {
 			return 0;
 		}
 	}
-
+	// block "{};"
 	int block_syntax(list<syntax_tree_iterator>& now) {
 		string key = now.back()->tokens.front();
 		if(key=="struct" || key=="class" || key=="union" || key=="enum") {
@@ -125,7 +128,7 @@ namespace syntax_module {
 			return 0;
 		}
 	}
-
+	// for loop
 	int for_syntax(list<syntax_tree_iterator>& now) {
 		list<string>& tk = now.back()->tokens;
 		if(tk.front()=="for") {
@@ -184,7 +187,7 @@ namespace syntax_module {
 			return 0;
 		}
 	}
-
+	// return 
 	int return_syntax(list<syntax_tree_iterator>& now) {
 		auto& tkf = now.back()->tokens.front();
 		if(tkf == "=>") {

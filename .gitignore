@@ -1,2 +1,2 @@
-compiler/output
-compiler/ast_struct
+compiler/compiler
+compiler/*.o
