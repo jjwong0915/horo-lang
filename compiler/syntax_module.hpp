@@ -17,6 +17,12 @@ namespace syntax_module {
 
 	int else_syntax(list<syntax_tree_iterator>&);
 
+	int block_syntax(list<syntax_tree_iterator>&);
+
+	int for_syntax(list<syntax_tree_iterator>&);
+
+	int return_syntax(list<syntax_tree_iterator>&);
+
 }
 
 #endif

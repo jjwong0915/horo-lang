@@ -8,11 +8,11 @@ using std::list;
 using ast_struct::syntax_tree;
 using ast_struct::syntax_tree_iterator;
 
-namespace output{
+namespace output {
 	// output
-	void print(syntax_tree t);
+	void print(syntax_tree);
 	//debug
-	void print_now(list<syntax_tree_iterator>& now);
+	void print_now(list<syntax_tree_iterator>&);
 
 }
 

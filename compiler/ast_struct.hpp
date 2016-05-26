@@ -1,3 +1,4 @@
+
 #ifndef AST_STRUCT
 #define AST_STRUCT
 

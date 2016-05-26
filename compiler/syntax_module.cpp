@@ -5,7 +5,7 @@
 #include "ast_struct.hpp"
 #include "syntax_module.hpp"
 
-using std::cout;
+using std::cerr;
 using std::endl;
 using std::string;
 using std::list;
@@ -14,11 +14,24 @@ using std::prev;
 using ast_struct::syntax_tree;
 using ast_struct::syntax_tree_iterator;
 
+/*
+ * Syntax modules are put in this header.
+ * 
+ * Interface: int syntax(list<syntax_tree_iterator>& now)
+ * 
+ * Return value { 0: continue, 1: end, 2: error }
+ *
+ */
+
 namespace syntax_module {
 	// "if() {}"
 	int if_while_syntax(list<syntax_tree_iterator>& now) {
 		list<string>& ts = now.back()->tokens;
 		if(ts.front()=="if" || ts.front()=="while") {
+			if(ts.size() < 2) {
+				cerr << "[error] wrong " << ts.front() << " syntax" << endl;
+				return 2;
+			}
 			ts.insert(next(ts.begin()), "(");
 			ts.push_back(")");
 			ts.push_back("{");
@@ -36,7 +49,8 @@ namespace syntax_module {
 	// ";" (must be last)
 	int semicolon_syntax(list<syntax_tree_iterator>& now) {
 		list<string>& ts = now.back()->tokens;
-		if(ts.front().front()!='#' && ts.back()!="{" && ts.back()!="}") {
+		string tsb = ts.back();
+		if(ts.front().front()!='#' && tsb!="{" && tsb!="}" && tsb!=";" && tsb!=":") {
 			ts.push_back(";");
 			//cout << "end with ;" << endl;
 			return 1;
@@ -68,11 +82,11 @@ namespace syntax_module {
 		if(ts.front() == "else") {
 			list<string> prev_line = prev(now.back(), 2)->tokens;
 			if(prev_line.front()!="if" && *next(prev_line.begin())!="else") {
-				cout << "[error] unexpected \"else\"" << endl;
+				cerr << "[error] unexpected \"else\"" << endl;
 				return 2;
 			} else {
 				if(ts.size() == 2) {
-					cout << "[error] wrong else syntax" << endl;
+					cerr << "[error] wrong else syntax" << endl;
 					return 2;
 				}
 				syntax_tree_iterator parent = *prev(now.end(), 2);
@@ -95,6 +109,88 @@ namespace syntax_module {
 		} else {
 			return 0;
 		}
+	}
+
+	int block_syntax(list<syntax_tree_iterator>& now) {
+		string key = now.back()->tokens.front();
+		if(key=="struct" || key=="class" || key=="union" || key=="enum") {
+			now.back()->tokens.push_back("{");
+			syntax_tree temp;
+			temp.indent = now.back()->indent;
+			temp.tokens.push_back("}");
+			temp.tokens.push_back(";");
+			(*prev(now.end(), 2))->children.insert(next(now.back()), temp);
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+	int for_syntax(list<syntax_tree_iterator>& now) {
+		list<string>& tk = now.back()->tokens;
+		if(tk.front()=="for") {
+			auto to_p = tk.end();					//iterator to "="
+			for(auto i=tk.begin();i!=tk.end();i++) {
+				if(*i=="to") {
+					if(to_p==tk.end()){
+						to_p = i;
+					} else {
+						cerr << "[error] wrong for syntax" << endl;
+						return 2;
+					}
+				}
+			}
+			if(to_p!=tk.end()) {
+				string type_name;
+				list<string>::iterator var_p;
+				if(*next(tk.begin(), 2) == "=") {
+					type_name = "auto";
+					var_p = next(tk.begin());
+				} else {
+					type_name = *next(tk.begin());
+					var_p = next(tk.begin(), 2);
+				}
+				list<string> tempk;
+				tempk.push_back("for");
+				tempk.push_back("(");
+				tempk.push_back(type_name);
+				tempk.push_back(*var_p);
+				for(auto i=next(var_p);i!=to_p;i++) {
+					tempk.push_back(*i);
+				}
+				tempk.push_back(";");
+				tempk.push_back(*var_p);
+				tempk.push_back("!=");
+				for(auto i=next(to_p);i!=tk.end();i++) {
+					tempk.push_back(*i);
+				}
+				tempk.push_back(";");
+				tempk.push_back(*var_p);
+				tempk.push_back("++");
+				tempk.push_back(")");
+				tempk.push_back("{");
+				tk = tempk;
+			} else {
+				tk.insert(next(tk.begin()), "(");
+				tk.push_back(")");
+				tk.push_back("{");
+			}
+			syntax_tree temp;
+			temp.indent = now.back()->indent;
+			temp.tokens.push_back("}");
+			(*prev(now.end(), 2))->children.insert(next(now.back()), temp);
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+	int return_syntax(list<syntax_tree_iterator>& now) {
+		auto& tkf = now.back()->tokens.front();
+		if(tkf == "=>") {
+			tkf = "return";
+		}
+		return 0;
 	}
 
 }

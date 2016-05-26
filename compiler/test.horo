@@ -1,16 +1,23 @@
 
-#include <iostream>
+#include iostream
 using namespace std
 
-int f int n
-    if n<=2
-        return 1
-    else
-        return f(n-1)+f(n-2)
+struct node
+    int data
+    node* next
 
+int f int n
+    if n <= 2
+        => 1
+    else
+        => f(n-1) + f(n-2)
 
 int main
-    int n
-    cin >> n
-    cout << f(n) << endl
-    return 0
+    int t
+    cin >> t
+    for i = 0 to t
+        int n
+        cin >> n
+        cout << f(n) << endl
+        => 0
+
