@@ -1,9 +1,10 @@
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <list>
 #include <iterator>
-#include "boost/spirit/include/qi.hpp"
+#include <cctype>
 #include "parser.hpp"
 #include "output.hpp"
 #include "ast_struct.hpp"
@@ -14,18 +15,11 @@ using std::cin;
 using std::endl;
 using std::getline;
 using std::string;
-using std::vector;
+using std::stringstream;
+using std::isspace;
 using std::list;
 using std::next;
 using std::prev;
-namespace qi = boost::spirit::qi;
-using qi::rule;
-using qi::grammar;
-using qi::parse;
-namespace ascii = boost::spirit::ascii;
-using ascii::char_;
-using ascii::space;
-using ascii::space_type;
 using output::print;
 using ast_struct::syntax_tree;
 using ast_struct::syntax_tree_iterator;
@@ -39,9 +33,31 @@ using syntax_module::return_syntax;
 
 
 namespace horo_parser {
-		
-	tokenizer::tokenizer() : tokenizer::base_type(cmd) {
-			cmd = *space >> +(char_ - space) % space;
+
+	const list<int (*)(list<syntax_tree_iterator>&)> syntaxes = {
+		if_while_syntax,
+		else_syntax,
+		for_syntax,
+		block_syntax,
+		function_syntax,
+		return_syntax,
+		semicolon_syntax
+	};
+
+	void lexer(string input, int& indent, list<string>& tokens) {
+		stringstream ss (input);
+		indent = 0;
+		while(isspace(ss.peek())) {
+			ss.get();
+			indent++;
+		}
+		string s;
+		while(ss >> s) {
+			tokens.push_back(s);
+		}
+		if(tokens.empty()) {
+			tokens.push_back(" ");
+		}
 	}
 
 	bool process_syntax(list<syntax_tree_iterator>& now) {
@@ -54,14 +70,8 @@ namespace horo_parser {
 			}
 			now.pop_back();
 		}
-		list<int (*)(list<syntax_tree_iterator>&)> syntaxes = { if_while_syntax,
-																else_syntax,
-																for_syntax,
-																block_syntax,
-																function_syntax,
-																return_syntax,
-																semicolon_syntax };
-		for(auto& i : syntaxes) {
+		
+		for(auto i : syntaxes) {
 			int end = i(now);
 			if(end) {
 				if(end == 1) {
@@ -74,10 +84,10 @@ namespace horo_parser {
 		return true;
 	}
 	// modify AST 
-	void insert_node(list<syntax_tree_iterator>& now, vector<string> data) {
+	void insert_node(list<syntax_tree_iterator>& now, int indent, list<string>& tokens) {
 		syntax_tree t;
-		t.indent = data[0].length();
-		t.tokens.insert(t.tokens.end(), next(data.begin()), data.end());
+		t.indent = indent;
+		t.tokens.insert(t.tokens.end(), tokens.begin(), tokens.end());
 		now.back()->children.push_back(t);
 		now.push_back(prev(now.back()->children.end()));
 	}
@@ -113,19 +123,14 @@ namespace horo_parser {
 
 		string s;
 		while(getline(cin, s)) {
-			string::iterator begin = s.begin();
-			tokenizer expr;
-			vector<string> data;
-			bool ok = parse(begin, s.end(), expr, data);
-			if(ok && begin == s.end()) {
-				int status = check_indent(now, data[0].length());
-				//cout << status << endl;
-				if(!status) {
-					insert_node(now, data);
-				} else {
-					return 1;
-				}
-				//print(root.children.back());
+			int indent;
+			list<string> tokens;
+			lexer(s, indent, tokens);
+			int status = check_indent(now, indent);
+			if(!status) {
+				insert_node(now, indent, tokens);
+			} else {
+				return 1;
 			}
 		}
 

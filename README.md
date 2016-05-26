@@ -1,7 +1,7 @@
 Horo Language
 ====
-An elegant programming language for graph algorithm
+An elegant language that compiles into C++
 
-
+* made for C++ algorithm designer
 * clear and easy-to-read syntax
-* declare the problem and get solving code
+* keep same logic and get better coding experience

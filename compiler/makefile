@@ -1,4 +1,4 @@
-.PHONY : clean
+.PHONY : clean install unistall
 CXXFLAGS = -std=c++11 -O3
 OBJ = compiler.o parser.o output.o syntax_module.o
 
@@ -18,5 +18,10 @@ syntax_module.cpp : ast_struct.hpp syntax_module.hpp
 clean:
 	rm *.o
 
+install:
+	cp compiler /usr/local/bin/horo
+
+uninstall:
+	rm /usr/local/bin/horo
 
 
