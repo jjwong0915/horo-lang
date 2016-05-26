@@ -1,8 +1,13 @@
 #include "commandline.hpp"
 
+#include <iostream>
+#include <vector>
+#include <cstring>
+
 using namespace std;
 
 namespace cmd{
+
 	const char *command[]={
 		"-h",//help
 		"-o",//name after
@@ -40,7 +45,7 @@ namespace cmd{
 			}else if(!strcmp(parameter[i],cmd::command[2])){
 				cmd.push_back(2);
 			}else{
-				cerr << "[Error] argument \"" << parameter[i] << "\" cann't be found QQ" << endl;
+				cerr << "[Error] argument \"" << parameter[i] << "\" can't be found QQ" << endl;
 				++err;
 			}
 		}

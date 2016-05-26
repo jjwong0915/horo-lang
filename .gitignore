@@ -1,2 +1,3 @@
 compiler/compiler
 compiler/*.o
+compiler/*.out
