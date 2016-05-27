@@ -13,19 +13,21 @@ namespace cmd{
 	bool compile=0;
 
 	const char *command[]={
-		"-h",//help
-		"-o",//name after
+		"-h, --help",//help
+		"-o <file>",//name after
 		"-x"//gcc
 	};
 
 	const char *commandillustrate[]={
-		"help",
-		"name your output filename",
-		"compile file with g++ after transpile"
+		"Display this information",
+		"Place the output into <file>(default: \"jizz.cpp\")",
+		"Compile the output with g++ after transpiled"
 	};
 
 	void command_help(void)
 	{
+		cout << "Usage: horo [options] [file]" << endl;
+		cout << "Options:" << endl;
 		for(int i=0;i<COMMANDNUM;++i){
 			cout << cmd::command[i] << ": " << cmd::commandillustrate[i] << endl;
 		}
