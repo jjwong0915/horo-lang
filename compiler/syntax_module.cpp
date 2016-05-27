@@ -19,7 +19,7 @@ using ast_struct::syntax_tree_iterator;
  * 
  * Interface: int syntax(list<syntax_tree_iterator>& now)
  * 
- * Return value { 0: continue, 1: end, 2: error }
+ * Return value { 0: continue, 1: end, 2: Error }
  *
  */
 
@@ -29,7 +29,7 @@ namespace syntax_module {
 		list<string>& ts = now.back()->tokens;
 		if(ts.front()=="if" || ts.front()=="while") {
 			if(ts.size() < 2) {
-				cerr << "[error] wrong " << ts.front() << " syntax" << endl;
+				cerr << "[Error] wrong " << ts.front() << " syntax" << endl;
 				return 2;
 			}
 			ts.insert(next(ts.begin()), "(");
@@ -86,11 +86,11 @@ namespace syntax_module {
 		if(ts.front() == "else") {
 			list<string> prev_line = prev(now.back(), 2)->tokens;
 			if(prev_line.front()!="if" && *next(prev_line.begin())!="else") {
-				cerr << "[error] unexpected \"else\"" << endl;
+				cerr << "[Error] unexpected \"else\"" << endl;
 				return 2;
 			} else {
 				if(ts.size() == 2) {
-					cerr << "[error] wrong else syntax" << endl;
+					cerr << "[Error] wrong else syntax" << endl;
 					return 2;
 				}
 				syntax_tree_iterator parent = *prev(now.end(), 2);
@@ -138,7 +138,7 @@ namespace syntax_module {
 					if(to_p==tk.end()){
 						to_p = i;
 					} else {
-						cerr << "[error] wrong for syntax" << endl;
+						cerr << "[Error] wrong for syntax" << endl;
 						return 2;
 					}
 				}

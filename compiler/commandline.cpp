@@ -8,6 +8,10 @@ using namespace std;
 
 namespace cmd{
 
+	string outputname,ccstd;
+	
+	bool compile;
+
 	const char *command[]={
 		"-h",//help
 		"-o",//name after
@@ -53,8 +57,7 @@ namespace cmd{
 	}
 
 	void argument_process(char** parameter,int argc,vector<int> &cmd){
-		static string cc,outputname,ccstd;
-		static bool compile=0;
+		
 		for(int i=0,n=cmd.size(),pi=1;i<n;++i,++pi){
 			switch(cmd[i]){
 				case 1:
@@ -74,6 +77,12 @@ namespace cmd{
 		}else{
 			return 1;
 		}
+	}
+
+	bool file_compile()
+	{
+		string s=
+
 	}
 
 }

@@ -12,6 +12,10 @@ namespace cmd{
 
 	extern const char *commandillustrate[];
 
+	extern string outputname,ccstd;
+	
+	extern bool compile;
+
 	void command_help();
 
 	bool argument_check(char** parameter,int argc,vector<int> &cmd);

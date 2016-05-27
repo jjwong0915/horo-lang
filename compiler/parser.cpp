@@ -102,7 +102,7 @@ namespace horo_parser {
 				now.pop_back();
 			}
 			if(now.back()->indent < input_indent) {
-				cerr << "[error] indent error" << endl;
+				cerr << "[Error] indent error" << endl;
 				return 1;
 			}
 			now.pop_back();

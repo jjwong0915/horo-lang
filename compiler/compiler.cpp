@@ -10,8 +10,9 @@ using std::strcmp;
 using horo_parser::parser;
 
 int main(int argc, char* argv[]) {
-	if(!cmd::mainconsole(argc,argv)){
-		return parser();
+	if(!cmd::mainconsole(argc,argv)){//mainconsole:if wrong or -help,return 1;
+		bool wrong=parser();
+		
 	}else{
 		return 0;
 	}
