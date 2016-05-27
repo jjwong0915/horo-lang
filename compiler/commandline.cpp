@@ -73,9 +73,6 @@ namespace cmd{
 					continue;
 			}
 		}
-		cout << outputname << endl;
-		cout << compile << endl;
-		cout << inputname << endl;
 	}
 
 	bool mainconsole(int argn,char* argu[])

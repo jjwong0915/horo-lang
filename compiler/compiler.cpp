@@ -20,7 +20,6 @@ int main(int argc, char* argv[]) {
 		//cin >> input;
 		ostream output(cout.rdbuf());
 		fstream finput,foutput;
-		cout << "jizz 23" << endl;
 		if(inputname!=" "){
 			finput.open(inputname);
 			if(finput.is_open())
@@ -30,14 +29,12 @@ int main(int argc, char* argv[]) {
 				return 0;
 			}
 		}
-		cout << "jizz33 " << endl;
 		if(outputname=="jizz"&&inputname!=" ")
 			outputname=inputname;
 		foutput.open(outputname+".cpp",fstream::out);
 		output.rdbuf(foutput.rdbuf());
 		wrong=parser(input,output);
 		foutput.close();
-		cout << "jizz 40" << endl;
 		if(cmd::compile){ 
 			string systemcmd="g++ " + cmd::outputname +".cpp " + cmd::ccstd + " -o " + outputname;
 			cout << systemcmd <<endl;
@@ -45,7 +42,6 @@ int main(int argc, char* argv[]) {
 		}
 		return wrong;
 	}else{
-		cout << "jizz48 " << endl;
 		return 0;
 	}
 }
