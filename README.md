@@ -36,8 +36,7 @@ int main
 
 
 ## Syntax Guide
-
-* 
+*  
 
 
 ## Contributors

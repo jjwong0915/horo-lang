@@ -6,7 +6,8 @@
 #include <list>
 #include "ast_struct.hpp"
 
-
+using std::istream;
+using std::ostream;
 using std::string;
 using std::list;
 using ast_struct::syntax_tree_iterator;
@@ -24,7 +25,7 @@ namespace horo_parser {
 
 	int check_indent(list<syntax_tree_iterator>&, int);
 	// parser
-	int parser();
+	int parser(istream&, ostream&);
 
 }
 

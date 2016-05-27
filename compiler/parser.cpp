@@ -11,7 +11,6 @@
 #include "syntax_module.hpp"
 
 using std::cerr;
-using std::cin;
 using std::endl;
 using std::getline;
 using std::string;
@@ -110,7 +109,7 @@ namespace horo_parser {
 		return 0;
 	}
 	// parser
-	int parser() {	
+	int parser(istream& in, ostream& out) {	
 
 		syntax_tree root;
 		root.indent = -2;
@@ -122,7 +121,7 @@ namespace horo_parser {
 		now.back()->tokens.push_back("module");
 
 		string s;
-		while(getline(cin, s)) {
+		while(getline(in, s)) {
 			int indent;
 			list<string> tokens;
 			lexer(s, indent, tokens);
@@ -144,7 +143,7 @@ namespace horo_parser {
 		}
 
 		for(syntax_tree i : root.children.back().children) {
-			print(i);
+			print(i, out);
 		}
 
 		return 0;
