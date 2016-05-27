@@ -1,6 +1,7 @@
 #ifndef COMMANDLINE
 #define COMMANDLINE
 
+#include <string>
 #include <vector>
 #define COMMANDNUM 3
 

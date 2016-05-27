@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cstring>
+#include <string>
 
 using namespace std;
 
@@ -81,7 +82,7 @@ namespace cmd{
 
 	bool file_compile()
 	{
-		string s=
+		//string s=
 
 	}
 
