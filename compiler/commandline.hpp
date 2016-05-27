@@ -1,7 +1,9 @@
 #ifndef COMMANDLINE
 #define COMMANDLINE
 
+#include <iostream>
 #include <vector>
+#include <cstring>
 #define COMMANDNUM 3
 
 using namespace std;
@@ -12,7 +14,7 @@ namespace cmd{
 
 	extern const char *commandillustrate[];
 
-	extern string outputname,ccstd;
+	extern string outputname,ccstd,inputname;
 	
 	extern bool compile;
 

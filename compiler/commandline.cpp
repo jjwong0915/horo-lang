@@ -8,9 +8,9 @@ using namespace std;
 
 namespace cmd{
 
-	string outputname,ccstd;
+	string outputname=" ",ccstd="-stdc++11",inputname=" ";
 	
-	bool compile;
+	bool compile=0;
 
 	const char *command[]={
 		"-h",//help
@@ -35,6 +35,7 @@ namespace cmd{
 	bool argument_check(char** parameter,int argc,vector<int> &cmd)
 	{	
 		int err=0;
+		bool inputexise=0;
 		for(int i=1;i<argc;++i){
 			if(!strcmp(parameter[i],cmd::command[0])) {
 				command_help();
@@ -48,6 +49,9 @@ namespace cmd{
 				}
 			}else if(!strcmp(parameter[i],cmd::command[2])){
 				cmd.push_back(2);
+			}else if(!inputexise){
+				inputexise=1;
+				inputname=parameter[i];
 			}else{
 				cerr << "[Error] argument \"" << parameter[i] << "\" can't be found QQ" << endl;
 				++err;
@@ -62,8 +66,12 @@ namespace cmd{
 			switch(cmd[i]){
 				case 1:
 					outputname=parameter[1+pi++];
+					break;
 				case 2:
 					compile=1;
+					break;
+				default:
+					continue;
 			}
 		}
 		//cout << outputname << endl;
@@ -79,10 +87,5 @@ namespace cmd{
 		}
 	}
 
-	bool file_compile()
-	{
-		string s=
-
-	}
 
 }
