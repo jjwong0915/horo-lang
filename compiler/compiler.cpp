@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <fstream>
+#include <cstdlib>
 #include "parser.hpp"
 #include "commandline.hpp"
 
@@ -19,23 +20,32 @@ int main(int argc, char* argv[]) {
 		//cin >> input;
 		ostream output(cout.rdbuf());
 		fstream finput,foutput;
+		cout << "jizz 23" << endl;
 		if(inputname!=" "){
 			finput.open(inputname);
 			if(finput.is_open())
 				input.rdbuf(finput.rdbuf());
 			else{
 				cerr << "[Error] file cann't open" << endl;
-				return 1;
+				return 0;
 			}
 		}
-		if(outputname!=" "){
-			foutput.open(outputname,fstream::out);
-			output.rdbuf(foutput.rdbuf());
-		}
+		cout << "jizz33 " << endl;
+		if(outputname=="jizz"&&inputname!=" ")
+			outputname=inputname;
+		foutput.open(outputname+".cpp",fstream::out);
+		output.rdbuf(foutput.rdbuf());
 		wrong=parser(input,output);
 		foutput.close();
+		cout << "jizz 40" << endl;
+		if(cmd::compile){ 
+			string systemcmd="g++ " + cmd::outputname +".cpp " + cmd::ccstd + " -o " + outputname;
+			cout << systemcmd <<endl;
+			wrong=system(systemcmd.c_str());
+		}
 		return wrong;
 	}else{
+		cout << "jizz48 " << endl;
 		return 0;
 	}
 }
