@@ -10,8 +10,6 @@ using namespace std;
 
 namespace cmd{
 
-	extern const char *command[];
-
 	extern const char *commandillustrate[];
 
 	extern string outputname,ccstd,inputname;
