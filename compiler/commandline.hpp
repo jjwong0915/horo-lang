@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace cmd{
+namespace cmd {
 
 	extern const char *commandillustrate[];
 

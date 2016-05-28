@@ -1,25 +1,24 @@
-#include <iostream>
 #include <string>
 #include <list>
 #include <iterator>
 #include "ast_struct.hpp"
+#include "output.hpp"
 #include "syntax_module.hpp"
 
-using std::cerr;
-using std::endl;
 using std::string;
 using std::list;
 using std::next;
 using std::prev;
 using ast_struct::syntax_tree;
 using ast_struct::syntax_tree_iterator;
+using output::error_log;
 
 /*
  * Syntax modules are put in this header.
  * 
  * Interface: int syntax(list<syntax_tree_iterator>& now)
  * 
- * Return value { 0: continue, 1: end, 2: Error }
+ * Return value { 0: error, 1: continue, 2: end }
  *
  */
 
@@ -29,8 +28,8 @@ namespace syntax_module {
 		list<string>& ts = now.back()->tokens;
 		if(ts.front()=="if" || ts.front()=="while") {
 			if(ts.size() < 2) {
-				cerr << "[Error] wrong " << ts.front() << " syntax" << endl;
-				return 2;
+				error_log("wrong \""+ts.front()+"\" syntax", now.back()->linenum);
+				return 0;
 			}
 			ts.insert(next(ts.begin()), "(");
 			ts.push_back(")");
@@ -40,9 +39,9 @@ namespace syntax_module {
 			temp.tokens.push_back("}");
 			(*prev(now.end(), 2))->children.insert(next(now.back()), temp);
 
-			return 1;
+			return 2;
 		} else {
-			return 0;
+			return 1;
 		}
 	}
 	// ";" (must be last)
@@ -59,9 +58,9 @@ namespace syntax_module {
 		};
 		if(ts.front().front()!='#' && valid(ts.back())) {
 			ts.push_back(";");
-			return 1;
+			return 2;
 		}
-		return 0;
+		return 1;
 	}
 	// function (must after block keywords)
 	int function_syntax(list<syntax_tree_iterator>& now) {
@@ -75,9 +74,9 @@ namespace syntax_module {
 			temp.tokens.push_back("}");
 			(*prev(now.end(), 2))->children.insert(next(now.back()), temp);
 
-			return 1;
+			return 2;
 		} else {
-			return 0;
+			return 1;
 		}
 	}
 	// "} else {}" | "} else if() {}"
@@ -85,13 +84,13 @@ namespace syntax_module {
 		list<string>& ts = now.back()->tokens;
 		if(ts.front() == "else") {
 			list<string> prev_line = prev(now.back(), 2)->tokens;
-			if(prev_line.front()!="if" && *next(prev_line.begin())!="else") {
-				cerr << "[Error] unexpected \"else\"" << endl;
-				return 2;
+			if(prev_line.front()!="if" && *next(prev_line.begin(),2)!="if") {
+				error_log("unexpected \"else\"", now.back()->linenum);
+				return 0;
 			} else {
 				if(ts.size() == 2) {
-					cerr << "[Error] wrong else syntax" << endl;
-					return 2;
+					error_log("wrong \"else\" syntax", now.back()->linenum);
+					return 0;
 				}
 				syntax_tree_iterator parent = *prev(now.end(), 2);
 
@@ -107,10 +106,10 @@ namespace syntax_module {
 				temp.tokens.push_back("}");
 				parent->children.insert(next(now.back()), temp);
 
-				return 1;
+				return 2;
 			}
 		} else {
-			return 0;
+			return 1;
 		}
 	}
 	// block "{};"
@@ -123,23 +122,23 @@ namespace syntax_module {
 			temp.tokens.push_back("}");
 			temp.tokens.push_back(";");
 			(*prev(now.end(), 2))->children.insert(next(now.back()), temp);
-			return 1;
+			return 2;
 		} else {
-			return 0;
+			return 1;
 		}
 	}
 	// for loop
 	int for_syntax(list<syntax_tree_iterator>& now) {
 		list<string>& tk = now.back()->tokens;
 		if(tk.front()=="for") {
-			auto to_p = tk.end();					//iterator to "="
+			auto to_p = tk.end();					//iterator for "to"
 			for(auto i=tk.begin();i!=tk.end();i++) {
 				if(*i=="to") {
 					if(to_p==tk.end()){
 						to_p = i;
 					} else {
-						cerr << "[Error] wrong for syntax" << endl;
-						return 2;
+						error_log("wrong \"for\" syntax", now.back()->linenum);
+						return 0;
 					}
 				}
 			}
@@ -182,9 +181,9 @@ namespace syntax_module {
 			temp.indent = now.back()->indent;
 			temp.tokens.push_back("}");
 			(*prev(now.end(), 2))->children.insert(next(now.back()), temp);
-			return 1;
+			return 2;
 		} else {
-			return 0;
+			return 1;
 		}
 	}
 	// return 
@@ -193,7 +192,7 @@ namespace syntax_module {
 		if(tkf == "=>") {
 			tkf = "return";
 		}
-		return 0;
+		return 1;
 	}
 
 }

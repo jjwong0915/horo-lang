@@ -14,6 +14,7 @@ namespace ast_struct {
 
 	struct syntax_tree {
 	 	int indent;
+	 	int linenum;
 	 	list<string> tokens;
 	 	list<syntax_tree> children;
 	};
